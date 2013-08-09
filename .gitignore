@@ -226,3 +226,4 @@ pip-log.txt
 *.mcw
 *.mptags
 *.tagsrc
+*.cof
