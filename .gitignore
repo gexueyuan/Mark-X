@@ -215,3 +215,14 @@ pip-log.txt
 .mr.developer.cfg
 
 *.o
+*.hex
+8003k/
+*.rar
+*.jpg
+*.pdf
+*.map
+*.mcs
+*.mcp
+*.mcw
+*.mptags
+*.tagsrc
