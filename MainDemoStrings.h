@@ -303,3 +303,5 @@ XCHAR TimeType[] = "Use  MDY(restart)";
 XCHAR EDITDATEstr[] = {'E','d','i','t',' ','M','a','r','k',' ','D','a','t','e',0};
 XCHAR EDITCALDATEdstr[] = {'C','A','L','.','D',0};
 #endif
+XCHAR UnlimitedStr[] = "Unlimited";		//
+XCHAR ScreenmodeStr[] = "Screenmode";		//

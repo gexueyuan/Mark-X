@@ -258,6 +258,12 @@ XCHAR	addressTemp;
 			addressTemp = BlowPressAddress;//RButtonAddress+16;
 			EEPROMWriteWord((pRb->ID -41 + 1)*5, BlowPressDataAddress);// add by Spring.Chen( 41 为单选框开始按钮)
 		}
+
+		else if(pRb->ID == Unlimited_RA)
+			{
+                       addressTemp = AdjustAddress;
+                       EEPROMWriteWord(0xabcd, AdjustTimesDataAddress);
+		}		
         	EEPROMWriteByte(pRb->ID, addressTemp);// add by Spring.Chen
 #endif
         SetState(pRb, RB_CHECKED|RB_DRAW_CHECK); // set check and redraw
@@ -440,6 +446,8 @@ rb_draw_check:
 			addressTemp = BlowTimeAddress;
 		else if(pRb->ID < BlowPressMax)
 			addressTemp = BlowPressAddress;
+		else if(pRb->ID == Unlimited_RA)
+			addressTemp = AdjustAddress;
 	if(EEPROMReadByte(addressTemp)== pRb->ID)
         		{
 	                SetState(pRb, RB_CHECKED|RB_DRAW_CHECK);

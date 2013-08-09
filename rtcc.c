@@ -1647,27 +1647,6 @@ void I2cRtccWriteByte(BYTE data, WORD address)
 
 }
 
-BYTE p[7]={0x30,0x59,0x15,0x20,0x02,0x06,0x00}; //2000 年6 月20 日星期3 15 点 59 分30 秒<倒序>
-void SetRtccDefault(void)
-{
-	unsigned int i;
-	I2cRtccWriteByte(0x00,0x00);
-//	I2cRtccWriteByte(0x01,0x11);
-
-
-	//设置时钟状态 
-	I2cRtccWriteByte(0x00,0x00);
-//	I2cRtccWriteByte(0x81,0x0d);
-	I2cRtccWriteByte(0x82,0x0e);
-//	I2cRtccWriteByte(1,0x0f);
-	for(i = 0; i<7;i++)
-		I2cRtccWriteByte(p+i,PCF8563Addr+i);
-	I2cRtccWriteByte(0x81,0x01);
-		
-
-
-}
-
 #if	0
 void EEPROMWriteWord(WORD data, WORD address)
 {

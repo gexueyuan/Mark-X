@@ -100,6 +100,8 @@ extern volatile XCHAR Flashbuff[RecordSizeMax];
 #define BlowPressMax		(BlowTimeMax + 6)	//47 最后一个必须多加一
 #define PeriodsMax			(BlowPressMax + 6)	// 53
 #define NumberMax			(PeriodsMax + 6 + 1)	//59 最后一个必须多加一
+#define Unlimited_RA                60
+
 
 //For the Print times
 #define PrintTimesAddress		(0x7F10)
@@ -156,13 +158,14 @@ struct tagRecord_Flag
 }RECORD_FLAG;
 */
 
-#define ST_AUTO     	0x0001  // 
-#define ST_REFUSE   	0x0002  // Bit for Refuse state.
-#define ST_Passive 	0x0004  // Bit for Initiative state.
-#define ST_Discontinued 	0x0008
+#define ST_AUTO     	0x01  // 
+#define ST_REFUSE   	0x02  // Bit for Refuse state.
+#define ST_Passive 	0x04  // Bit for Initiative state.
+#define ST_Discontinued 	0x08
 //#define ST_FRAME  	    0x0010  // Bit to indicate frame is displayed.
 //#define ST_DRAW     	0x4000  // Bit to indicate static text must be redrawn.
 //#define ST_HIDE     	0x8000  // Bit to remove object from screen.
+#define Screen_mode  0xFA
 
 
 //reserve in eeprom
@@ -208,6 +211,6 @@ extern unsigned int I2C_COUNTER,softMS;
 extern unsigned char softMin,softSec,timeSet[7];
 
 extern BOOL Unit_Select;
-extern unsigned int ST_IRstatus;
+extern unsigned char ST_IRstatus;
 extern BOOL alarmON;
 #endif

@@ -1091,6 +1091,55 @@ void Print_Table_Text_Passive()
  
 }
 
+#ifdef SA_VERSION
+void Print_Screenmode()
+{
+    unsigned char Table_Text_TestMode[]= "Test mode: Screen";
+	unsigned char result_alcoholedetect[] = "Result: Alcohol Detect";
+	unsigned char result_noalcohole[] = "Result: No Alcohol";
+
+	
+
+	CopyChar(&PrintDataBuff[Datanum],Table_Text_TestMode,17);
+
+    Datanum = Datanum +17;
+
+    PrintDataBuff[Datanum] = 0x0d;
+
+	Datanum++; 
+
+	PrintDataBuff[Datanum] = 0x0d;
+
+	Datanum++;
+
+    PrintDataBuff[Datanum] = 0x0d;
+
+	Datanum++;
+
+    if(Screen_mode & Printbuff[10])
+    	{
+			CopyChar(&PrintDataBuff[Datanum],result_alcoholedetect,22);
+
+    		Datanum = Datanum +22;
+    	}
+	else
+		{
+			CopyChar(&PrintDataBuff[Datanum],result_noalcohole,18);
+
+    		Datanum = Datanum +18;
+		}
+		
+	PrintDataBuff[Datanum] = 0x0d;
+
+	Datanum++;
+
+    PrintDataBuff[Datanum] = 0x0d;
+
+	Datanum++;	
+ 
+}
+#endif
+
 #ifndef POLVersion
 /*---------------------------------------------------------------------
   Function Name: Print_Table_Text_TestModePassive
@@ -2097,6 +2146,13 @@ void Inputdata(void)
 #ifdef DOT			
  	}
 #endif
+
+#ifdef SA_VERSION
+if(Screen_mode & Printbuff[16])
+	Print_Screenmode();
+else
+#endif
+{
             if(Printbuff[16]&(ST_REFUSE))
                 Print_Table_Text_RefuseTest();
             else if(Printbuff[16]&(ST_Discontinued))
@@ -2118,6 +2174,7 @@ void Inputdata(void)
 
                			Print_Table_Text_NONGDU();
             	}
+}
 
 #ifndef DOT			   
 Print_Table_Text_Testee();

@@ -546,69 +546,6 @@ unsigned int  Filter(uchar Type)
 
 
      }
-unsigned char Get_char(unsigned char tempH)
-{
-	unsigned char result;
-	switch(tempH)
-		{
-			case 0:
-			default:
-				result = "0";
-				break;
-			case 1:
-				result = "1";
-				break;
-			case 2:
-				result = "2";
-				break;
-			case 3:
-				result = "3";
-				break;
-			case 4:
-				result = "4";
-				break;
-			case 5:
-				result = "5";
-				break;
-			case 6:
-				result = "6";
-				break;
-			case 7:
-				result = "7";
-				break;
-			case 8:
-				result = "8";
-				break;
-			case 9:
-				result = "9";
-				break;
-		}
-	return result;
-}
-
-/*---------------------------------------------------------------------
-  Function Name: unsigned char *hex_to_char(unsigned int x)
-  Description:   *hex_to_char  
-  Inputs:        hex
-  Returns:       result
------------------------------------------------------------------------*/
-unsigned char *hex_to_char(unsigned int x)
-{
-	uchar result[2];
-	unsigned long result_temp;
-	uch tempH,tempL;
-	tempH = x/255;
-	tempL = x%255;
-
-	result_temp = (tempH/16)*1000+(tempH%16)*100+(tempL/16)*10+tempL%16;// BCD码（常用的10进制数）
-	tempH = result_temp/10+'0';
-	tempL = result_temp%10+'0';
-
-	result[0] = 0x38;//Get_char(tempH);
-	result[1] = 0x35;//Get_char(tempL);
-	return result;
-	
-}
 
 
 /*---------------------------------------------------------------------

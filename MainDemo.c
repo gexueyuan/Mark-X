@@ -692,7 +692,7 @@ WORD	Temp_adc,initialpress;
 WORD    epPress;
 WORD ItemID = 0;
 extern WORD	Temp_adc;
-unsigned int ST_IRstatus = 0;
+unsigned char ST_IRstatus = 0;
 extern  unsigned int  Tem_AD;
 extern  unsigned int  AD_press;
 extern  unsigned int  MarkDensity;
@@ -1301,9 +1301,13 @@ Nop();
 	}
 	// 如果超出标定期限，则先显示请标定界面。
 	TTTemp0=EEPROMReadWord(AdjustTimesDataAddress);
+	
+if(TTTemp0 != 0xabcd)
+{
 	TTTemp1=EEPROMReadWord(TestTimesDataAddress);
 	if(TTTemp0<=TTTemp1 )
 		Demarcate = TRUE;
+}
 		
 	if(Demarcate)
 	{
@@ -1492,8 +1496,19 @@ if(serialnumber <= 2000)
 	Flashbuff[14] = Kt;	
 	Flashbuff[15] = 0;
 
+#ifdef SA_VERSION
+    if(TestMode == 0xcc)
+    	{
+		 Flashbuff[16] = Screen_mode;// 测试模式
+
+		 Flashbuff[10] = ((alocholdetecet)?Screen_mode:0);
+		 
+    	}
+	else	 
+		Flashbuff[16] = ST_IRstatus;// 测试模式
+#else
 	Flashbuff[16] = ST_IRstatus;// 测试模式
-	
+#endif	
 	Flashbuff[17]=EEPROMReadByte(MarkYrDataAddress);
 
        Flashbuff[18]=EEPROMReadByte(MarkMthDataAddress);
@@ -4057,7 +4072,7 @@ XCHAR edition[] = "POL 1.06"; //edition
 #ifdef Argentina
 XCHAR edition[] = "ARG 1.06"; //edition
 #else
-XCHAR edition[] = "SA 1.06"; //edition
+XCHAR edition[] = "SA 1.07"; //edition
 #endif
 #else
 XCHAR edition[] = "EN 1.03"; //edition
@@ -7661,7 +7676,18 @@ StCreate(ID_STATICTEXT3,           		// ID
               positionax+4*positionmaxx,positionay+4*positionmaxy+90,         		// dimension
               ST_DRAW,//|ST_RIGHT_ALIGN,//ST_CENTER_ALIGN,		// display text
               InitiativeStr, 				// "TEST", 	// text
-              mainScheme);                   // use alternate scheme	
+              mainScheme);  
+#ifdef SA_VERSION
+if(Screen_mode&ST_IRstatus)
+	StCreate(ID_STATICTEXT3,           		// ID 
+              positionax+3*positionmaxx,positionay+3*positionmaxy+90,
+              7*(positionax+positionmaxx),positionay+4*positionmaxy+90,         		// dimension
+              ST_DRAW,//|ST_RIGHT_ALIGN,//ST_CENTER_ALIGN,		// display text
+              ScreenmodeStr,//&GetdataStr[96],//GetdataStr, 				// "TEST", 	// text
+              mainScheme);    //   alt2Scheme            // use alternate scheme
+else
+#endif	
+{
 if(ST_IRstatus&(ST_REFUSE))
 	
 StCreate(ID_STATICTEXT3,           		// ID 
@@ -7693,7 +7719,8 @@ StCreate(ID_STATICTEXT3,           		// ID
               ST_DRAW,//|ST_RIGHT_ALIGN,//ST_CENTER_ALIGN,		// display text
               AutoStr,//&GetdataStr[96],//GetdataStr, 				// "TEST", 	// text
               mainScheme);
-              
+}            
+
 
 	StCreate(ID_STATICTEXT3,           		// ID 酒精含量
               positionax,positionay+4*positionmaxy+120,
@@ -7701,8 +7728,24 @@ StCreate(ID_STATICTEXT3,           		// ID
               ST_DRAW,//|ST_RIGHT_ALIGN,//ST_CENTER_ALIGN,		// display text
               TestResultStr, 				// "TEST", 	// text
               mainScheme);                   // use alternate scheme
-
-			  
+#ifdef SA_VERSION
+if((Screen_mode & ST_IRstatus)&&(Flashbuff[10] & Screen_mode))
+	StCreate(ID_STATICTEXT3,           		// ID 
+              positionax+3*positionmaxx,positionay+4*positionmaxy+120,
+              7*(positionax+positionmaxx),positionay+5*positionmaxy+120,          		// dimension
+              ST_DRAW,//|ST_RIGHT_ALIGN,//ST_CENTER_ALIGN,		// display text
+              AlocholDetectedstr,//&GetdataStr[96],//GetdataStr, 				// "TEST", 	// text
+              mainScheme);    //   
+else if((Screen_mode & ST_IRstatus)&&(!Flashbuff[10]))
+		StCreate(ID_STATICTEXT3,           		// ID 
+              positionax+3*positionmaxx,positionay+4*positionmaxy+120,
+              7*(positionax+positionmaxx),positionay+5*positionmaxy+120,          		// dimension
+              ST_DRAW,//|ST_RIGHT_ALIGN,//ST_CENTER_ALIGN,		// display text
+              NoAlocholstr,//&GetdataStr[96],//GetdataStr, 				// "TEST", 	// text
+              mainScheme);
+else
+#endif
+{
 	if(ST_IRstatus&(ST_REFUSE))
 	{
 		StCreate(ID_STATICTEXT3,           		// ID 
@@ -7725,11 +7768,11 @@ StCreate(ID_STATICTEXT3,           		// ID
 	else
 	{StCreate(ID_STATICTEXT3,           		// ID 
               positionax+3*positionmaxx,positionay+4*positionmaxy+120,
-              7*(positionax+positionmaxx),positionay+5*positionmaxy+120,         		// dimension
+              7*(positionax+positionmaxx),positionay+5*positionmaxy+120,         		
               ST_DRAW,//|ST_RIGHT_ALIGN,//ST_CENTER_ALIGN,		// display text
 		Test_Result,//GetdataStr,// SubjectNameStr, 				// "TEST", 	// text
               mainScheme);
-//if(Flashbuff[9])
+	
 	DisplayThickness(DisplayUnitStr);
 	StCreate(ID_STATICTEXT3,           		// ID 
               positionax+5*positionmaxx,positionay+4*positionmaxy+120,
@@ -7738,152 +7781,7 @@ StCreate(ID_STATICTEXT3,           		// ID
 		 DisplayUnitStr,//GetdataStr,// SubjectNameStr, 				// "TEST", 	// text
               mainScheme);
 	}
-/*else
-	StCreate(ID_STATICTEXT3,           		// ID 
-              positionax+5*positionmaxx,positionay+0*positionmaxy,
-              7*(positionax+positionmaxx),positionay+1*positionmaxy,         		// dimension
-              ST_DRAW,//|ST_RIGHT_ALIGN,//ST_CENTER_ALIGN,		// display text
-		mg_100mlStr,//GetdataStr,// SubjectNameStr, 				// "TEST", 	// text
-              mainScheme);*/
-#if	0//USE_ITEM
-	if(EEPROMReadByte(ID_CHECKBOXADDRESS)==1)
-	{
-		StCreate(ID_STATICTEXT3,           		// ID 
-              positionax,positionay+5*positionmaxy,
-              positionax+3*positionmaxx+10,positionay+6*positionmaxy,         		// dimension
-              ST_DRAW,//|ST_RIGHT_ALIGN,//ST_CENTER_ALIGN,		// display text
-              Item0Str, 				// "TEST", 	// text
-              mainScheme);                   // use alternate scheme
-StCreate(ID_STATICTEXT3,           		// ID 
-              positionax+3*positionmaxx+20,positionay+5*positionmaxy,
-              7*(positionax+positionmaxx),positionay+6*positionmaxy,         		// dimension
-              ST_DRAW,//|ST_RIGHT_ALIGN,//ST_CENTER_ALIGN,		// display text
-		 &Flashbuff[49],//NULL,//GetdataStr,// SubjectNameStr, 				// "TEST", 	// text
-              mainScheme);  //  alt2Scheme               // use alternate scheme
-		}
-	if(EEPROMReadByte(ID_CHECKBOXADDRESS+1)==1)
-	{
-	StCreate(ID_STATICTEXT3,           		// ID 
-              positionax,positionay+6*positionmaxy,
-              positionax+3*positionmaxx+10,positionay+7*positionmaxy,         		// dimension
-              ST_DRAW,//|ST_RIGHT_ALIGN,//ST_CENTER_ALIGN,		// display text
-              Item1Str, 				// "TEST", 	// text
-              mainScheme);                   // use alternate scheme
-StCreate(ID_STATICTEXT3,           		// ID 
-              positionax+3*positionmaxx+20,positionay+6*positionmaxy,
-              7*(positionax+positionmaxx),positionay+7*positionmaxy,         		// dimension
-              ST_DRAW,//|ST_RIGHT_ALIGN,//ST_CENTER_ALIGN,		// display text
-              &Flashbuff[68],//NULL,//&GetdataStr[16],//WriteRecordStr, 				// "TEST", 	// text
-              mainScheme);    //  alt2Scheme             // use alternate scheme
-		}
-	if(EEPROMReadByte(ID_CHECKBOXADDRESS+2)==1)
-	{
-	StCreate(ID_STATICTEXT3,           		// ID 
-              positionax,positionay+7*positionmaxy,
-              positionax+3*positionmaxx+10,positionay+8*positionmaxy,         		// dimension
-              ST_DRAW,//|ST_RIGHT_ALIGN,//ST_CENTER_ALIGN,		// display text
-              Item2Str, 				// "TEST", 	// text
-              mainScheme);                   // use alternate scheme	
-StCreate(ID_STATICTEXT3,           		// ID 
-              positionax+3*positionmaxx+20,positionay+7*positionmaxy,
-              7*(positionax+positionmaxx),positionay+8*positionmaxy,         		// dimension
-              ST_DRAW,//|ST_RIGHT_ALIGN,//ST_CENTER_ALIGN,		// display text
-              &Flashbuff[87],//NULL,//&GetdataStr[32],//&WriteRecordStr[13],//GetdataStr, 				// "TEST", 	// text
-              mainScheme);  //  alt2Scheme               // use alternate scheme
-		}
-	if(EEPROMReadByte(ID_CHECKBOXADDRESS+3)==1)
-	{
-	StCreate(ID_STATICTEXT3,           		// ID 
-              positionax,positionay+8*positionmaxy,
-              positionax+3*positionmaxx+10,positionay+9*positionmaxy,         		// dimension
-              ST_DRAW,//|ST_RIGHT_ALIGN,//ST_CENTER_ALIGN,		// display text
-              Item3Str, 				// "TEST", 	// text
-              mainScheme);                   // use alternate scheme	
-StCreate(ID_STATICTEXT3,           		// ID 
-              positionax+3*positionmaxx+20,positionay+8*positionmaxy,
-              7*(positionax+positionmaxx),positionay+9*positionmaxy,         		// dimension
-              ST_DRAW,//|ST_RIGHT_ALIGN,//ST_CENTER_ALIGN,		// display text
-              &Flashbuff[106],//NULL,//&GetdataStr[48],//GetdataStr, 				// "TEST", 	// text
-              mainScheme);   //  alt2Scheme              // use alternate scheme
-		}
-	if(EEPROMReadByte(ID_CHECKBOXADDRESS+4)==1)
-		{
-	StCreate(ID_STATICTEXT3,           		// ID 
-              positionax,positionay+9*positionmaxy,
-              positionax+3*positionmaxx+10,positionay+10*positionmaxy,         		// dimension
-              ST_DRAW,//|ST_RIGHT_ALIGN,//ST_CENTER_ALIGN,		// display text
-              Item4Str, 				// "TEST", 	// text
-              mainScheme);                   // use alternate scheme	
-StCreate(ID_STATICTEXT3,           		// ID 
-              positionax+3*positionmaxx+20,positionay+9*positionmaxy,
-              7*(positionax+positionmaxx),positionay+10*positionmaxy,         		// dimension
-              ST_DRAW,//|ST_RIGHT_ALIGN,//ST_CENTER_ALIGN,		// display text
-              &Flashbuff[125],//,//NULL,//&GetdataStr[64],//GetdataStr, 				// "TEST", 	// text
-              mainScheme);  //   alt2Scheme              // use alternate scheme
-		}
-	if(EEPROMReadByte(ID_CHECKBOXADDRESS+5)==1)
-	{
-	StCreate(ID_STATICTEXT3,           		// ID 
-              positionax,positionay+10*positionmaxy,
-              positionax+3*positionmaxx+10,positionay+11*positionmaxy,         		// dimension
-              ST_DRAW,//|ST_RIGHT_ALIGN,//ST_CENTER_ALIGN,		// display text
-              Item5Str, 				// "TEST", 	// text
-              mainScheme);                   // use alternate scheme	
-StCreate(ID_STATICTEXT3,           		// ID 
-              positionax+3*positionmaxx+20,positionay+10*positionmaxy,
-              7*(positionax+positionmaxx),positionay+11*positionmaxy,         		// dimension
-              ST_DRAW,//|ST_RIGHT_ALIGN,//ST_CENTER_ALIGN,		// display text
-              &Flashbuff[144],//NULL,//&GetdataStr[80],//GetdataStr, 				// "TEST", 	// text
-              mainScheme);
-		}
-   if(EEPROMReadByte(ID_CHECKBOXADDRESS+6)==1)
-	{
-	StCreate(ID_STATICTEXT3,           		// ID 
-              positionax,positionay+11*positionmaxy,
-              positionax+3*positionmaxx+10,positionay+12*positionmaxy,         		// dimension
-              ST_DRAW,//|ST_RIGHT_ALIGN,//ST_CENTER_ALIGN,		// display text
-              Item6Str, 				// "TEST", 	// text
-              mainScheme);                   // use alternate scheme	
-StCreate(ID_STATICTEXT3,           		// ID 
-              positionax+3*positionmaxx+20,positionay+11*positionmaxy,
-              7*(positionax+positionmaxx),positionay+12*positionmaxy,         		// dimension
-              ST_DRAW,//|ST_RIGHT_ALIGN,//ST_CENTER_ALIGN,		// display text
-              &Flashbuff[163],//NULL,//&GetdataStr[80],//GetdataStr, 				// "TEST", 	// text
-              mainScheme);
-		}
-     if(EEPROMReadByte(ID_CHECKBOXADDRESS+7)==1)
-	{
-	StCreate(ID_STATICTEXT3,           		// ID 
-              positionax,positionay+12*positionmaxy,
-              positionax+3*positionmaxx+10,positionay+13*positionmaxy,         		// dimension
-              ST_DRAW,//|ST_RIGHT_ALIGN,//ST_CENTER_ALIGN,		// display text
-              Item7Str, 				// "TEST", 	// text
-              mainScheme);                   // use alternate scheme	
-StCreate(ID_STATICTEXT3,           		// ID 
-              positionax+3*positionmaxx+20,positionay+12*positionmaxy,
-              7*(positionax+positionmaxx),positionay+13*positionmaxy,         		// dimension
-              ST_DRAW,//|ST_RIGHT_ALIGN,//ST_CENTER_ALIGN,		// display text
-              &Flashbuff[182],//NULL,//&GetdataStr[80],//GetdataStr, 				// "TEST", 	// text
-              mainScheme);
-		}
-     if(EEPROMReadByte(ID_CHECKBOXADDRESS+8)==1)
-	{
-	StCreate(ID_STATICTEXT3,           		// ID 
-              positionax,positionay+13*positionmaxy,
-              positionax+3*positionmaxx+10,positionay+14*positionmaxy,         		// dimension
-              ST_DRAW,//|ST_RIGHT_ALIGN,//ST_CENTER_ALIGN,		// display text
-              Item8Str, 				// "TEST", 	// text
-              mainScheme);                   // use alternate scheme	
-StCreate(ID_STATICTEXT3,           		// ID 
-              positionax+3*positionmaxx+20,positionay+13*positionmaxy,
-              7*(positionax+positionmaxx),positionay+14*positionmaxy,         		// dimension
-              ST_DRAW,//|ST_RIGHT_ALIGN,//ST_CENTER_ALIGN,		// display text
-              &Flashbuff[201],//NULL,//&GetdataStr[80],//GetdataStr, 				// "TEST", 	// text
-              mainScheme);
-		}	
-#endif
-
-
+}
 	obj = (OBJ_HEADER*)BtnCreate(ID_BUTTONChina_M,//ID_KEYCHINAPAD+1,             	// ID 
               KEYABCSTARTX+0*KEYABCSIZEX,		
               KEYSTARTY+5*KEYSIZEY+40,
@@ -9592,7 +9490,9 @@ void CreateResult(void)
 
 	XCHAR* UnitPoit;
 	GetThickness();
+#ifndef SA_VERSION
 	if(TestMode!=0xcc)
+#endif		
 	writerecord();
 	GOLFree();   // free memory for the objects in the previous linked list and start new list
 
@@ -10489,10 +10389,10 @@ void CreateCalibrate()
               TestMthStr, 				// "TEST", 	// text
               altScheme);        //  mainScheme         // use alternate scheme
 
-       StCreate(ID_STATICTEXT3,           		// ID 
-              positionax+5*positionmaxx,70,
-              positionax+7*positionmaxx,100,         		// dimension
-              ST_DRAW|ST_CENTER_ALIGN,		// display text
+      StCreate(ID_STATICTEXT3,           		// ID 
+              positionax+5*positionmaxx,50,
+              positionax+7*positionmaxx,80,         		// dimension
+              ST_DRAW,//|ST_CENTER_ALIGN,		// display text
               TestNumberStr, 				// "TEST", 	// text
               altScheme);         //  mainScheme        // use alternate scheme
 
@@ -10525,30 +10425,39 @@ void CreateCalibrate()
               altScheme);              	// use alternate scheme
 
 	RbCreate(ID_RADIOBUTTONStar + 22,          // ID 
-              positionax+4*positionmaxx,(GetMaxY() - 220),positionax+6*positionmaxx,(GetMaxY() - 190),         // dimension
+              positionax+4*positionmaxx,(GetMaxY() - 240),positionax+6*positionmaxx,(GetMaxY() - 210),         // dimension
               RB_DRAW,                 // will be dislayed after creation
               OneNumStr, 			   // "Center"
               altScheme);              // use alternate scheme
 
     RbCreate(ID_RADIOBUTTONStar + 23,          // ID 
-              positionax+4*positionmaxx,(GetMaxY() - 180),positionax+6*positionmaxx,(GetMaxY() - 150),         // dimension
+              positionax+4*positionmaxx,(GetMaxY() - 200),positionax+6*positionmaxx,(GetMaxY() - 170),         // dimension
               RB_DRAW,                 // will be dislayed after creation
               ThreeNumStr, 			   // "Center"
               altScheme);              // use alternate scheme
 
     RbCreate(ID_RADIOBUTTONStar + 24,          // ID 
-              positionax+4*positionmaxx,(GetMaxY() - 140),positionax+6*positionmaxx,(GetMaxY() - 110),         // dimension
+              positionax+4*positionmaxx,(GetMaxY() - 160),positionax+6*positionmaxx,(GetMaxY() - 130),         // dimension
               RB_DRAW,                 // will be dislayed after creation
               FineNumStr, 			   // "Right"
               altScheme);              // use alternate scheme
 
  	RbCreate(ID_RADIOBUTTONStar + 25,          	// ID 
-              positionax+4*positionmaxx,(GetMaxY() - 100),positionax+6*positionmaxx,(GetMaxY() - 70),           // dimension
+              positionax+4*positionmaxx,(GetMaxY() - 120),positionax+6*positionmaxx,(GetMaxY() - 90),           // dimension
               RB_DRAW,//|RB_GROUP,//|	\
               //RB_CHECKED, 				// will be dislayed and checked after creation
                                        	// first button in the group
               SevenNumStr, 					// "Left"
-              altScheme);              	// use alternate scheme
+              altScheme);              
+
+ 	RbCreate(Unlimited_RA,          	
+              120,(GetMaxY() - 80),237,(GetMaxY() - 50),           // dimension
+              RB_DRAW,//|RB_GROUP,//|	\
+              //RB_CHECKED, 				// will be dislayed and checked after creation
+                                       	// first button in the group
+              UnlimitedStr, 					// "Left"
+              altScheme); 
+	
 	CbCreate(ID_CHECKBOX8,             	// ID 
               positionax+3,235,positionmaxx-2,260,         	// dimension
               CB_DRAW,      			// will be dislayed and checked after creation

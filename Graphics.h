@@ -62,12 +62,13 @@
 
 //#define DOT
 #define South_Africa_Version
+#define SA_VERSION
 //#define POLVersion
 //#define Richard
 
 #define NewSCIC
 
-#define USECABLE
+//#define USECABLE
 #define QuickTestMode
 ////////////////////////////// INCLUDES //////////////////////////////
 #include "Primitive.h"  // Graphic primitives
