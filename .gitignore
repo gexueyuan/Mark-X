@@ -227,4 +227,7 @@ pip-log.txt
 *.mptags
 *.tagsrc
 *.cof
+Mark*
+Makefile
+
 
