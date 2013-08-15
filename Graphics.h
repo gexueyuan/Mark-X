@@ -62,7 +62,7 @@
 
 //#define DOT
 #define South_Africa_Version
-#define SA_VERSION
+//#define SA_VERSION
 //#define POLVersion
 //#define Richard
 
