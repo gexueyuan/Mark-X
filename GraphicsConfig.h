@@ -165,8 +165,18 @@
 *
 ********************************************************************/
 
-//#include "LGDP4531_R61505_S6D0129_S6D0139_SPFD5408.h"
-#include "SPFD5408B.h"
+#define ST7789S
+//#define SPFD5408B
+
+#ifdef  ST7789S
+	#include "ST7789S.H"
+#else 
+	#ifdef  SPFD5408B
+		#include "SPFD5408B.h"
+	#else
+		#include "LGDP4531_R61505_S6D0129_S6D0139_SPFD5408.h"
+	#endif
+#endif
 //#include "SSD1906.h"   // Driver for Solomon Systech. SSD1906 controller 
 //#include "SSD1303.h"   // Driver for SSD1303 (monochrome OLED display) controller
 //#include "SH1101A.h"	  // Driver for the HS1101A (monochrome OLED display) controller
