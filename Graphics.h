@@ -62,8 +62,8 @@
 
 //#define DOT
 #define South_Africa_Version
-#define SA_VERSION
-//#define POLVersion
+//#define SA_VERSION
+#define POLVersion
 //#define Richard
 
 #define NewSCIC
