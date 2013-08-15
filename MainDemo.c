@@ -4079,7 +4079,7 @@ XCHAR edition[] = "SA 1.07"; //edition
 XCHAR edition[] = "EN 1.03"; //edition
 #endif
 */
-XCHAR edition[] = "EN 1.06"; //edition
+XCHAR edition[] = "LAT 1.06"; //edition
 
 #ifdef USECABLE
  edition[7] ='c';
