@@ -4066,7 +4066,11 @@ static const XCHAR Alcovisor[] = "ALCOVISOR";
 #endif
 #endif
 
+<<<<<<< HEAD
 
+=======
+/*
+>>>>>>> f7c6f4d2d6b93d5a87724e72161fa9538acc0150
 #ifdef POLVersion
 XCHAR edition[] = "POL 1.06"; //edition
 #elif defined(South_Africa_Version)
@@ -4078,6 +4082,8 @@ XCHAR edition[] = "SA 1.07"; //edition
 #else
 XCHAR edition[] = "EN 1.03"; //edition
 #endif
+*/
+XCHAR edition[] = "EN 1.06"; //edition
 
 //XCHAR edition[] = "EN 1.06"; //edition
 
