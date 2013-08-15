@@ -57,7 +57,7 @@
 // Emboss size set for 3-D effect
 #define GOL_EMBOSS_SIZE                 3		
 
-#define Argentina
+//#define Argentina
 
 
 //#define DOT
@@ -68,7 +68,7 @@
 
 #define NewSCIC
 
-//#define USECABLE
+#define USECABLE
 #define QuickTestMode
 ////////////////////////////// INCLUDES //////////////////////////////
 #include "Primitive.h"  // Graphic primitives
